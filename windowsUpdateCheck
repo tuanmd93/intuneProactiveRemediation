@@ -1,0 +1,27 @@
+## Detection
+
+$threshold = -3
+$windowsUpdateLastSearch = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate 
+
+if ($windowsUpdateLastSearch -ge (Get-Date).AddDays($threshold)){
+    Write-Host "Last scan was $windowsUpdateLastSearch - All good"
+    exit 0
+} 
+else {
+    Write-Output "Last scan was $windowsUpdateLastSearch - Start new scan" 
+    exit 1
+
+}
+
+## Remediation
+
+try
+{
+    (New-Object -com "Microsoft.Update.AutoUpdate").DetectNow()
+    exit 0
+}
+catch{
+    $errMsg = $_.Exception.Message
+    Write-host $errMsg
+    exit 1
+}
